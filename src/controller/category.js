@@ -33,7 +33,26 @@ export const GetALlCategory = async (req, res) => {
     }
 }
 //getOne
-
+export const getOneCategory = (req, res) => {
+    try {
+        const id = req.params.id;
+        let sql = `SELECT * FROM categories WHERE cat_id=${id}`
+        connect.query(sql, (err, result) => {
+            if (err) {
+                return res.json({
+                    message: "Lấy 1 danh mục thất bại"
+                })
+            }
+            const data = result.rows[0]
+            return res.json({
+                message: "Lấy 1 danh mục thành công",
+                data
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({ message: 'Loi api' })
+    }
+}
 //remove Category
 export const RemoveCategory = async (req, res) => {
     try {
