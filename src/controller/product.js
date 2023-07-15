@@ -52,7 +52,25 @@ export const GetOneProduct = async (req, res) => {
     }
 }
 //getall
-
+export const GetAllProduct = (req, res) => {
+    try {
+        let sql = `SELECT * FROM products`
+        connect.query(sql, (err, result) => {
+            if (err) {
+                return res.json({
+                    message: "Không lấy được danh sách sản phẩm"
+                })
+            }
+            const data = result.rows
+            return res.json({
+                message: "Danh sách sản phẩm",
+                data
+            })
+        })
+    } catch (error) {
+        return res.status(500).json({ message: 'Loi api' })
+    }
+}
 
 
 //update
