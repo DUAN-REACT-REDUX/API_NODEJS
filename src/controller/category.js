@@ -53,6 +53,46 @@ export const getOneCategory = (req, res) => {
         return res.status(500).json({ message: 'Loi api' })
     }
 }
+//remove Category
+export const RemoveCategory = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Xóa các bản ghi liên kết trước
+        await removeLinkedRecords(id);
+
+        // Tiến hành xóa danh mục
+        const query = `DELETE from categories WHERE cat_id=${id} RETURNING *`;
+        const result = await connect.query(query);
+
+        if (result.rows.length === 0) {
+            return res.json({
+                message: "Xóa thất bại"
+            });
+        }
+
+        const data = result.rows[0];
+        return res.json({
+            message: "Xóa thành công",
+            data
+        });
+    } catch (error) {
+        console.error('Lỗi:', error);
+        return res.status(500).json({ message: 'Lỗi API' });
+    }
+};
+
+// Hàm xóa các bản ghi liên kết
+async function removeLinkedRecords(categories) {
+    // Cập nhật các bảng liên kết với ràng buộc khóa ngoại
+    const linkedTables = ['products'] // Thay thế bằng danh sách các bảng liên kết
+
+    for (const table of linkedTables) {
+        const query = `UPDATE ${table} SET cat_id = NULL WHERE cat_id = ${categories}`;
+        await connect.query(query);
+    }
+}
+
 //update
 export const UpdateCategory = async (req, res) => {
     try {
