@@ -32,3 +32,20 @@ export const GetALlCategory = async (req, res) => {
         return res.status(500).json({ message: 'Loi api' })
     }
 }
+//update
+export const UpdateCategory = async (req, res) => {
+    try {
+        const id = req.params.id
+        const { name, image } = req.body
+        let sql = `UPDATE categories SET name='${name}', image='${image}' WHERE cat_id=${id} RETURNING *`
+        connect.query(sql, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: 'Update category that bai' })
+            }
+            const data = result.rows[0]
+            return res.status(200).json({ message: 'Update category thanh cong', data })
+        })
+    } catch (err) {
+        return res.status(500).json({ message: 'Loi api' })
+    }
+}
