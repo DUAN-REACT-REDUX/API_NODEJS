@@ -3,6 +3,7 @@ import connect from "./connect";
 import cors from "cors";
 import RouterCategories from "./router/category"
 import RouterProduct from "./router/product"
+import RouterUsers from "./router/user"
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(cors());
 
 app.use('/api', RouterCategories)
 app.use('/api', RouterProduct)
+app.use('/api', RouterUsers)
 
 
 connect.connect((err) => {
