@@ -1,11 +1,12 @@
 import connect from "../connect";
-
+import bcrypt from 'bcrypt';
 //signup
-export const signUp = (req, res) => {
+export const signUp = async (req, res) => {
     try {
         const { name, province, district, ward, address, email, password, image, role } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
         let sql = `INSERT INTO users(name,province,district,ward,address,email,password,image,role)
-        VALUES('${name}','${province}','${district}','${ward}','${address}','${email}','${password}','${image}','${role}') RETURNING *`
+        VALUES('${name}','${province}','${district}','${ward}','${address}','${email}','${hashedPassword}','${image}','${role}') RETURNING *`
         connect.query(sql, (err, result) => {
             if (err) return res.json({
                 message: "Đăng ký thất bại "
