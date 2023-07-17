@@ -8,9 +8,9 @@ export const AddComment = async (req, res) => {
         }
 
         const { productId, content } = req.body;
-        const comment_time = new Date().toISOString();
+        // const comment_time = new Date().toISOString();
         let sql = `INSERT INTO comments(product_id,user_id, content,comment_time )
-        VALUES('${productId}','${req.user.id}', '${content}', '${comment_time}') RETURNING *`
+        VALUES('${productId}','${req.user.id}', '${content}', NOW()') RETURNING *`
         connect.query(sql, (err, result) => {
             if (err) {
                 return res.status(500).json({ message: 'Thêm comment thất bại' })
@@ -21,4 +21,6 @@ export const AddComment = async (req, res) => {
     } catch (err) {
         return res.status(500).json({ message: 'Lỗi API' })
     }
+
 }
+
