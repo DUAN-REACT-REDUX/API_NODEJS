@@ -7,47 +7,50 @@ export const AddToCart = async (req, res) => {
         //xu ly khi dang nhap
         if (token) {
             try {
-                const decoded = jwt.verify(token, "boquan");
-                const userId = decoded._id;
+
+                const decoded = jwt.verify(token, "du_an_fw2");
+                const userId = decoded.id;
                 console.log(userId);
-                let sqlUser = `SELECT * FROM users WHERE user_id=${userId} RETURNING *`
+
+                let sqlUser = `SELECT * FROM users WHERE user_id = $1 `;
+                let values = [userId];
                 let user
-                let cart
-                const products = []
-                connect.query(sqlUser, async (err, result) => {
+
+                connect.query(sqlUser, values, async (err, result) => {
                     if (err) {
-                        return res.status(500).json({ message: "Truy van user that bai" });
+                        return res.status(500).json({ message: "Truy van user that bai", err });
                     }
                     user = result.rows[0];
-                    await user.save()
-                    if (!user.cart) {
-                        let sqlCart = `INSERT INTO carts(user_id,products) 
-                        VALUES (${userId}, ${products}) RETURNING *`
-                        connect.query(sqlCart, async (err, result) => {
+                    console.log(user.cartid);
+                    let sqlCart = `SELECT * FROM carts WHERE cart_id = $1`
+                    let values = [user.cartid];
+                    console.log(values);
+                    connect.query(sqlCart, values, async (err, result) => {
+                        if (err) {
+                            return res.status(500).json({ message: "Tim cart theo cart user that bai", err })
+                        }
+                        const cart = result.rows[0]
+
+                        console.log(cart);
+                        const { product_id } = req.body
+                        console.log(product_id);
+                        cart.products.push(product_id)
+                        let sqlUpdateCart = `UPDATE carts SET products = array_append(products, ${product_id}) WHERE cart_id = ${cart.cart_id} RETURNING *`;
+                        connect.query(sqlUpdateCart, (err, result) => {
                             if (err) {
-                                return res.status(500).json({ message: "Tao cart that bai" })
+                                return res.status(500).json({ message: "Loi khi them", err })
                             }
-                            cart = result.rows[0]
-                            user.cart = cart.cart_id
-                            await user.save()
+                            const data = result.rows[0]
+                            return res.json({ message: "Thanh cong", data })
                         })
-                    } else {
-                        let sqlCart = `SELECT * FROM carts WHERE cart_id=${user.cart} RETURNING *`
-                        connect.query(sqlCart, async (err, result) => {
-                            if (err) {
-                                return res.status(500).json({ message: "Tim cart theo cart user that bai" })
-                            }
-                            cart = result.rows[0]
-                            await cart.save()
-                        })
-                    }
-                    const { product_id } = req.body
-                    cart.products.push(product_id)
-                    await cart.save()
-                    return res.status(200).json({ message: "Them san pham vao cart thanh cong", cart })
+                        // await cart.save()
+                        // return res.status(200).json({ message: "Them san pham vao cart thanh cong", cart })
+                    })
+
+
                 })
             } catch (err) {
-                return res.status(500).json({ message: "Loi khi Add To Cart da dang nhap" })
+                return res.status(500).json({ message: "Loi khi Add To Cart da dang nhap", err })
             }
         } else {
             const { product_id } = req.body
@@ -62,9 +65,14 @@ export const AddToCart = async (req, res) => {
                 cart = result.rows[0]
                 if (cart.cart_id) {
                     console.log(product_id);
-                    cart.products.push(product_id)
-                    console.log(cart.products);
-                    return res.status(200).json({ message: "Them vao gio hang thanh cong", cart })
+                    let sqlUpdateCart = `UPDATE carts SET products = array_append(products, ${product_id}) WHERE cart_id = ${cart.cart_id} RETURNING *`;
+                    connect.query(sqlUpdateCart, (err, result) => {
+                        if (err) {
+                            return res.status(500).json({ message: "Loi khi them", err })
+                        }
+                        const data = result.rows[0]
+                        return res.json({ message: "Thanh cong", data })
+                    })
                 } else {
                     return res.status(404).json({ message: "Tao cart bi loi" })
                 }
