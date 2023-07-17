@@ -1,5 +1,30 @@
 import connect from "../connect"
 
+
+
+
+export const searchProduct = async (req, res) => {
+    try {
+        const name = req.query.name;
+        const regex = `%${name}%`;
+
+        let sql = `SELECT * FROM products WHERE name ILIKE $1`;
+        const result = await connect.query(sql, [regex]);
+
+        return res.json({
+            message: "Tìm thấy sản phẩm",
+            data: result.rows,
+        });
+    } catch (error) {
+        return res.json({
+            message: "Không tìm thấy sản phẩm",
+            error,
+        });
+    }
+};
+
+
+
 //add
 export const AddProduct = async (req, res) => {
     try {
