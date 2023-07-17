@@ -2,7 +2,7 @@ import connect from "../connect"
 
 
 
-
+//searchProduct
 export const searchProduct = async (req, res) => {
     try {
         const name = req.query.name;
@@ -23,6 +23,25 @@ export const searchProduct = async (req, res) => {
     }
 };
 
+//searchProduct by Category
+
+export const searchProductByCategory = async (req, res) => {
+    try {
+        const name = req.query.name;
+        const regex = `%${name}%`
+        let sql = `SELECT p.* FROM products p JOIN categories c ON p.cat_id = c.cat_id WHERE c.name ILIKE $1`;
+        const result = await connect.query(sql, [regex]);
+        return res.json({
+            message: "Tìm thấy sản phẩm trong danh mục ",
+            data: result.rows,
+        })
+    } catch (error) {
+        return res.json({
+            message: "Không tìm thấy sản phẩm của danh mục bạn đã chọn",
+            error,
+        });
+    }
+}
 
 
 //add
