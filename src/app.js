@@ -5,6 +5,7 @@ import RouterCategories from "./router/category"
 import RouterProduct from "./router/product"
 import RouterUsers from "./router/user"
 import RouterCart from "./router/cart"
+import RouterComments from "./router/comments"
 
 
 
@@ -20,6 +21,7 @@ app.use('/api', RouterCategories)
 app.use('/api', RouterProduct)
 app.use('/api', RouterUsers)
 app.use('/api', RouterCart)
+app.use('/api', RouterComments)
 
 connect.connect((err) => {
     if (err) {
