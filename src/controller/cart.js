@@ -35,7 +35,7 @@ export const AddToCart = async (req, res) => {
                         const { product_id } = req.body
                         console.log(product_id);
                         cart.products.push(product_id)
-                        let sqlUpdateCart = `UPDATE carts SET products = array_append(products, ${product_id}) WHERE cart_id = ${cart.cart_id} RETURNING *`;
+                        let sqlUpdateCart = `UPDATE carts SET products = array_append(products, ${product_id}), user_id=${userId} WHERE cart_id = ${cart.cart_id} RETURNING *`;
                         connect.query(sqlUpdateCart, (err, result) => {
                             if (err) {
                                 return res.status(500).json({ message: "Loi khi them", err })
