@@ -10,18 +10,14 @@ export const AddToCart = async (req, res) => {
 
                 const decoded = jwt.verify(token, "du_an_fw2");
                 const userId = decoded.id;
-                console.log(userId);
-
                 let sqlUser = `SELECT * FROM users WHERE user_id = $1 `;
                 let values = [userId];
                 let user
-
                 connect.query(sqlUser, values, async (err, result) => {
                     if (err) {
                         return res.status(500).json({ message: "Truy van user that bai", err });
                     }
                     user = result.rows[0];
-                    console.log(user.cartid);
                     let sqlCart = `SELECT * FROM carts WHERE cart_id = $1`
                     let values = [user.cartid];
                     console.log(values);
@@ -30,10 +26,7 @@ export const AddToCart = async (req, res) => {
                             return res.status(500).json({ message: "Tim cart theo cart user that bai", err })
                         }
                         const cart = result.rows[0]
-
-                        console.log(cart);
                         const { product_id } = req.body
-                        console.log(product_id);
                         cart.products.push(product_id)
                         let sqlUpdateCart = `UPDATE carts SET products = array_append(products, ${product_id}), user_id=${userId} WHERE cart_id = ${cart.cart_id} RETURNING *`;
                         connect.query(sqlUpdateCart, (err, result) => {

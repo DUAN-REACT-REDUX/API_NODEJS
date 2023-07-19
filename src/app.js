@@ -6,7 +6,7 @@ import RouterProduct from "./router/product"
 import RouterUsers from "./router/user"
 import RouterCart from "./router/cart"
 import RouterComments from "./router/comments"
-
+import RouterCheckout from "./router/checkout"
 
 
 const app = express();
@@ -22,6 +22,7 @@ app.use('/api', RouterProduct)
 app.use('/api', RouterUsers)
 app.use('/api', RouterCart)
 app.use('/api', RouterComments)
+app.use('/api', RouterCheckout)
 
 connect.connect((err) => {
     if (err) {
