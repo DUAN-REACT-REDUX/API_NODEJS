@@ -64,15 +64,40 @@ export const AddProduct = async (req, res) => {
 export const RemoveProduct = async (req, res, next) => {
     try {
         const id = req.params.id
-        console.log(id);
-        let sql = `DELETE from products WHERE product_id =${id} RETURNING *`
-        connect.query(sql, (err, result) => {
+        const { is_detete } = req.body
+        let sqlPro = `SELECT * FROM products WHERE product_id=${id}`
+        connect.query(sqlPro, async (err, result) => {
             if (err) {
-                return res.status(500).json({ message: 'Xoa that bai', err })
+                return res.status(500).json({ message: "Khong tim thay product", err })
             }
-            const data = result.rows[0]
-            return res.status(200).json({ message: 'Xoa thanh cong', data })
+            const product = result.rows[0]
+            console.log(product);
+            if (is_detete) {
+                let sqldelete = `DELETE FROM products WHERE product_id=$1`
+                await connect.query(sqldelete, [id]);
+            } else {
+                let sqldelete = `UPDATE products SET is_deleted = true WHERE product_id = $1`
+                await connect.query(sqldelete, [id]);
+            }
+            return res.status(200).json({
+                message: "Xóa sản phẩm thành công",
+                product // Trả về thông tin sản phẩm đã xóa (ID)
+            });
         })
+    } catch (err) {
+        return res.status(500).json({ message: 'Loi api' })
+    }
+}
+export const RestoreProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const restoreQuery = `UPDATE products SET is_deleted = false WHERE product_id = $1`;
+        await connect.query(restoreQuery, [id]);
+
+        return res.status(200).json({
+            message: "Phục hồi sản phẩm thành công",
+            data: { product_id: id }, // Trả về thông tin sản phẩm đã phục hồi (ID)
+        });
     } catch (err) {
         return res.status(500).json({ message: 'Loi api' })
     }

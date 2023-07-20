@@ -4,6 +4,7 @@ import {
   GetAllProduct,
   GetOneProduct,
   RemoveProduct,
+  RestoreProduct,
   UpdateProduct,
   searchProduct,
   searchProductByCategory,
@@ -17,7 +18,8 @@ router.get("/products", GetAllProduct);
 router.get("/products/search", searchProduct);
 router.get("/products/searchByCategory", searchProductByCategory);
 router.delete("/products/:id", RemoveProduct);
-router.get("/products/:id", GetOneProduct);
+router.patch("/products/:id/restore", RestoreProduct);
+router.get("/products/:id",GetOneProduct );
 router.put("/products/:id/update", UpdateProduct);
 
 export default router;
