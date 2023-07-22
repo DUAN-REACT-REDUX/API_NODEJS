@@ -123,8 +123,10 @@ export const GetOneProduct = async (req, res) => {
 //getall
 export const GetAllProduct = (req, res) => {
     try {
-        let sql = `SELECT * FROM products`
-        connect.query(sql, (err, result) => {
+        const { _sort = "createAt", _order = "asc", _limit = 3, _page = 1 } = req.query;
+        const offset = (_page - 1) * _limit;
+        let sqlQuery = `SELECT * FROM products ORDER BY ${_sort} ${_order === "desc" ? "DESC" : "ASC"} LIMIT ${_limit} OFFSET ${offset};`;
+        connect.query(sqlQuery, (err, result) => {
             if (err) {
                 return res.json({
                     message: "Không lấy được danh sách sản phẩm"
@@ -140,6 +142,7 @@ export const GetAllProduct = (req, res) => {
         return res.status(500).json({ message: 'Loi api' })
     }
 }
+//http://localhost:8080/api/products?_sort=price&_page=3&_order=desc&_limit=5 truy van dang nhu nay
 
 
 //update
