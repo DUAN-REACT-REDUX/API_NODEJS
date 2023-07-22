@@ -133,9 +133,21 @@ export const GetAllProduct = (req, res) => {
                 })
             }
             const data = result.rows
-            return res.json({
-                message: "Danh sách sản phẩm",
-                data
+            const countQuery = 'SELECT COUNT(*) as totalProducts FROM products;';
+            connect.query(countQuery, (err, countResult) => {
+                if (err) {
+                    return res.json({
+                        message: "Không lấy được tổng số sản phẩm"
+                    });
+                }
+                const totalProducts = countResult.rows[0].totalproducts;
+                const totalPages = Math.ceil(totalProducts / _limit);
+                // console.log(totalPages);
+                return res.json({
+                    message: "Danh sách sản phẩm",
+                    data,
+                    totalPages
+                });
             })
         })
     } catch (error) {
