@@ -13,7 +13,7 @@ import { checkPermission } from "../middleware/checkPermission";
 
 const router = express.Router();
 
-router.post("/products/add", checkPermission, AddProduct);
+router.post("/products/add", AddProduct);
 router.get("/products", GetAllProduct);
 router.get("/products/search", searchProduct);
 router.get("/products/searchByCategory", searchProductByCategory);
