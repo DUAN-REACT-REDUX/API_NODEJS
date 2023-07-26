@@ -1,6 +1,6 @@
 import connect from "../connect"
 
-
+import jwt from "jsonwebtoken"
 
 //searchProduct
 export const searchProduct = async (req, res) => {
@@ -63,41 +63,37 @@ export const AddProduct = async (req, res) => {
 //remove
 export const RemoveProduct = async (req, res, next) => {
     try {
+        const token = req.headers.authorization?.split(" ")[1];
+        const decoded = jwt.verify(token, "du_an_fw2");
+        const userId = decoded.id;
         const id = req.params.id
-        const { is_detete } = req.body
-        let sqlPro = `SELECT * FROM products WHERE product_id=${id}`
-        connect.query(sqlPro, async (err, result) => {
+        let sqluser = `SELECT * FROM users WHERE user_id=${userId}`;
+        connect.query(sqluser, (err, result) => {
             if (err) {
-                return res.status(500).json({ message: "Khong tim thay product", err })
+                return res.status(500).json({
+                    message: "Lay user that bai", err
+                })
             }
-            const product = result.rows[0]
-            console.log(product);
-            if (is_detete) {
-                let sqldelete = `DELETE FROM products WHERE product_id=$1`
-                await connect.query(sqldelete, [id]);
-            } else {
-                let sqldelete = `UPDATE products SET is_deleted = true WHERE product_id = $1`
-                await connect.query(sqldelete, [id]);
-            }
-            return res.status(200).json({
-                message: "Xóa sản phẩm thành công",
-                product // Trả về thông tin sản phẩm đã xóa (ID)
-            });
-        })
-    } catch (err) {
-        return res.status(500).json({ message: 'Loi api' })
-    }
-}
-export const RestoreProduct = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const restoreQuery = `UPDATE products SET is_deleted = false WHERE product_id = $1`;
-        await connect.query(restoreQuery, [id]);
-
-        return res.status(200).json({
-            message: "Phục hồi sản phẩm thành công",
-            data: { product_id: id }, // Trả về thông tin sản phẩm đã phục hồi (ID)
+            const user = result.rows[0]
+            let sqldelete = `DELETE FROM products WHERE product_id=${id} RETURNING *`
+            connect.query(sqldelete, (err, result) => {
+                if (err) {
+                    return res.status(500).json({
+                        message: "Xóa sản phẩm that bai", err
+                    })
+                }
+                const product = result.rows[0]
+                let sql = `INSERT INTO recyclebin(product, user_info, time) VALUES ('{"product_id":${product.product_id}, "name":"${product.name}", "price":${product.price}, "description":"${product.description}", "color":"${product.color}", "quantity":${product.quantity}, "cat_id":${product.cat_id}}', "image":"${product.image}", '{"user_id":${user.user_id}, "name":"${user.name}"}', NOW()) RETURNING *`
+                connect.query(sql, (err, results) => {
+                    if (err) {
+                        return res.status(500).json({ message: "khong them vao thung rac duoc", err })
+                    }
+                    const data = results.rows[0]
+                    console.log(data);
+                })
+            })
         });
+
     } catch (err) {
         return res.status(500).json({ message: 'Loi api' })
     }
