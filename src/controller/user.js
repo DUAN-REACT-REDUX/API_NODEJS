@@ -11,13 +11,13 @@ export const signUp = async (req, res) => {
         let values = [products];
         let cart
 
-        connect.query(sqlcart,values, (err, result) => {
+        connect.query(sqlcart, values, (err, result) => {
             if (err) {
-                return res.status(500).json({ message:"Loi tao cart",err})
+                return res.status(500).json({ message: "Loi tao cart", err })
             }
             cart = result.rows[0]
             console.log(cart);
-            let sql = `INSERT INTO users(name,province,district,ward,address,email,password,image,role,cartid)
+            let sql = `INSERT INTO users(s)
         VALUES('${name}','${province}','${district}','${ward}','${address}','${email}','${hashedPassword}','${image}','member',${cart.cart_id}) RETURNING *`
             connect.query(sql, (err, result) => {
                 if (err) return res.json({
@@ -83,6 +83,23 @@ export const signIn = (req, res) => {
         });
     }
 };
+
+// get all user
+export const GetALlUser = async (req, res) => {
+    try {
+        let sql = `SELECT * FROM users`
+        connect.query(sql, (err, results) => {
+            if (err) {
+                return res.status(500).json({ message: 'Lay danh sach that bai' })
+            }
+            const data = results.rows
+            return res.status(200).json({ message: 'Lay danh sach user thanh cong', data })
+        })
+    } catch (err) {
+        return res.status(500).json({ message: 'Loi api' })
+    }
+}
+
 
 
 
