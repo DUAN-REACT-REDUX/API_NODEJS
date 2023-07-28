@@ -17,7 +17,7 @@ export const signUp = async (req, res) => {
             }
             cart = result.rows[0]
             console.log(cart);
-            let sql = `INSERT INTO users(s)
+            let sql = `INSERT INTO users(name,province,district,ward,address,email,password,image,role,cartid)
         VALUES('${name}','${province}','${district}','${ward}','${address}','${email}','${hashedPassword}','${image}','member',${cart.cart_id}) RETURNING *`
             connect.query(sql, (err, result) => {
                 if (err) return res.json({
