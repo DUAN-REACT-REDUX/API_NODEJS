@@ -83,13 +83,15 @@ export const RemoveProduct = async (req, res, next) => {
                     })
                 }
                 const product = result.rows[0]
-                let sql = `INSERT INTO recyclebin(product, user_info, time) VALUES ('{"product_id":${product.product_id}, "name":"${product.name}", "price":${product.price}, "description":"${product.description}", "color":"${product.color}", "quantity":${product.quantity}, "cat_id":${product.cat_id}}', "image":"${product.image}", '{"user_id":${user.user_id}, "name":"${user.name}"}', NOW()) RETURNING *`
+                console.log(product);
+                let sql = `INSERT INTO recyclebin(product, user_info, time) VALUES ('{"product_id":${product.product_id}, "name":"${product.name}", "price":${product.price}, "description":"${product.description}", "color":"${product.color}", "quantity":${product.quantity}, "cat_id":${product.cat_id}, "image":"${product.image}"}', '{"user_id":${user.user_id}, "name":"${user.name}"}', NOW()) RETURNING *`
                 connect.query(sql, (err, results) => {
                     if (err) {
                         return res.status(500).json({ message: "khong them vao thung rac duoc", err })
                     }
                     const data = results.rows[0]
                     console.log(data);
+                    return res.json({ message:"Them vao thung rac thanh cong",data})
                 })
             })
         });
