@@ -110,3 +110,20 @@ export const UpdateCategory = async (req, res) => {
         return res.status(500).json({ message: 'Loi api' })
     }
 }
+
+
+export const GetProductByCategory = async (req, res) => {
+    try {
+        const id = req.params.id
+        let sql = `SELECT * FROM products WHERE cat_id=${id}`
+        connect.query(sql, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: 'Loi khi tim product theo category', err })
+            }
+            const products = result.rows
+            return res.json({ message: 'Lay thanh cong', products })
+        })
+    } catch (err) {
+        return res.status(500).json({ message: "Loi api", err })
+    }
+}
