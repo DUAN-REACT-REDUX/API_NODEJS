@@ -91,7 +91,7 @@ export const RemoveProduct = async (req, res, next) => {
                     }
                     const data = results.rows[0]
                     console.log(data);
-                    return res.json({ message:"Them vao thung rac thanh cong",data})
+                    return res.json({ message: "Them vao thung rac thanh cong", data })
                 })
             })
         });
@@ -100,7 +100,6 @@ export const RemoveProduct = async (req, res, next) => {
         return res.status(500).json({ message: 'Loi api' })
     }
 }
-
 //getone
 export const GetOneProduct = async (req, res) => {
     try {
