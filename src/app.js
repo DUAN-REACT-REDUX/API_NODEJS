@@ -8,7 +8,7 @@ import RouterCart from "./router/cart"
 import RouterComments from "./router/comments"
 import RouterCheckout from "./router/checkout"
 import RouterBill from './router/bill'
-
+import RouterRecyclebin from './router/recyclebin'
 
 const app = express();
 
@@ -25,6 +25,7 @@ app.use('/api', RouterCart)
 app.use('/api', RouterComments)
 app.use('/api', RouterCheckout)
 app.use('/api', RouterBill)
+app.use('/api', RouterRecyclebin)
 
 connect.connect((err) => {
     if (err) {
