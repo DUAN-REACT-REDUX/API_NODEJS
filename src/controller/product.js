@@ -174,13 +174,13 @@ export const UpdateProduct = async (req, res) => {
 //  6 new product
 export const GetSixNewestProducts = (req, res) => {
     try {
-        const { _limit = 6, _page = 1 } = req.query;
+        const { _limit = 8, _page = 1 } = req.query;
         const offset = (_page - 1) * _limit;
         let sqlQuery = `SELECT * FROM products ORDER BY product_id DESC LIMIT ${_limit} OFFSET ${offset};`;
         connect.query(sqlQuery, (err, result) => {
             if (err) {
                 return res.json({
-                    message: "Không lấy được danh sách 6 sản phẩm mới nhất"
+                    message: "Không lấy được danh sách 8 sản phẩm mới nhất"
                 })
             }
             const data = result.rows
@@ -194,7 +194,7 @@ export const GetSixNewestProducts = (req, res) => {
                 const totalProducts = countResult.rows[0].totalproducts;
                 const totalPages = Math.ceil(totalProducts / _limit);
                 return res.json({
-                    message: "Danh sách 6 sản phẩm mới nhất",
+                    message: "Danh sách 8 sản phẩm mới nhất",
                     data,
                     totalPages
                 });
@@ -204,4 +204,4 @@ export const GetSixNewestProducts = (req, res) => {
         return res.status(500).json({ message: 'Lỗi API' })
     }
 }
-// http://localhost:8080/api/sixproducts?_limit=6&_page=1
+// http://localhost:8080/api/sixproducts?_limit=8&_page=1
