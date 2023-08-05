@@ -31,3 +31,17 @@ export const RestoreProduct = async (req, res) => {
         return res.status(500).json({ message: 'Loi API', err })
     }
 }
+export const GetAllRecyclebin = async (req, res) => {
+    try {
+        const sql = `SELECT * FROM recyclebin`;
+        connect.query(sql, (err, result) => {
+            if (err) {
+                return res.status(500).json({ message: "Lỗi truy vấn cơ sở dữ liệu", err });
+            }
+            const data = result.rows
+            return res.status(200).json({ message: 'Lấy thùng rác thành công', data })
+        });
+    } catch (err) {
+        return res.status(500).json({ message: "Lỗi API", err });
+    }
+};
